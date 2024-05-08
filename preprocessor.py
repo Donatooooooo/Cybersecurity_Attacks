@@ -1,33 +1,27 @@
 from dataset import Dataset
 import pandas
+import re
 
-def searchEngine(string):
-    tokens = string.split()
-    first = tokens[0].split("/")[0]
-    if first == "Opera":
+def searchEngine(userAgent):
+    browserPattern = re.compile(r'Mozilla.*?(Firefox|Chrome|MSIE|Safari)', re.IGNORECASE)
+    browserMatch = browserPattern.search(userAgent)
+    if browserMatch:
+        return browserMatch.group(1)
+    else:
         return "Opera"
-    elif first == "Mozilla" or '"Mozilla':
-        for token in tokens:
-            token = token.split("/")[0]
-            if token == "Chrome":
-                return "Chrome"
-            if token == "Firefox":
-                return "Chrome"
-            if token == "Safari":
-                return "Safari"
-        return "Mozilla"
 
-def os(string):
-    systems = ["Windows", "Macintosh", "Linux", "Android", "iPhone", "iPad", "iPod"]
-    for system in systems:
-        if system in string:
-            if (system.startswith('i')):
-                return 'iOS'
-            elif (system.startswith('M')):
-                return 'macOS'
-            else:
-                return system
-    return None
+def os(userAgent):
+    osPattern = re.compile(r'(Windows|Macintosh|Linux|iPhone|iPad|iPod|Android)', re.IGNORECASE)
+    osMatch = osPattern.search(userAgent)
+    if osMatch:
+        if osMatch.group(1).startswith('i'):
+            return 'iOS'
+        if osMatch.group(1).startswith('M'):
+            return 'macOS'
+        else:
+            return osMatch.group(1)
+    else:
+        return "Unknown"
 
 def datasetPreprocessor(dataset: Dataset):
     data = dataset.getDataset()
