@@ -11,23 +11,21 @@ def searchEngine(userAgent):
         return "Opera"
 
 def os(userAgent):
-    osPattern = re.compile(r'(Windows|Macintosh|Linux|iPhone|iPad|iPod|Android)', re.IGNORECASE)
+    osPattern = re.compile(r'(Windows|Mac OS|Linux|iPhone OS|iPad OS|iPod OS|Android)', re.IGNORECASE)
     osMatch = osPattern.search(userAgent)
     if osMatch:
-        if osMatch.group(1).startswith('i'):
-            return 'iOS'
-        if osMatch.group(1).startswith('M'):
-            return 'macOS'
-        else:
-            return osMatch.group(1)
+        return osMatch.group(1)
     else:
         return "Unknown"
 
 def datasetPreprocessor(dataset: Dataset):
     data = dataset.getDataset()
     data['Timestamp'] = pandas.to_datetime(data['Timestamp'])
-    data.insert(0, 'Time',  data['Timestamp'].dt.time)
-    data.insert(0, 'Date',  data['Timestamp'].dt.date)
+    data.insert(0, 'Hour',  data['Timestamp'].dt.hour)
+    data.insert(0, 'Minute',  data['Timestamp'].dt.minute)
+    data.insert(0, 'Year',  data['Timestamp'].dt.year)
+    data.insert(0, 'Month',  data['Timestamp'].dt.month)
+    data.insert(0, 'Day',  data['Timestamp'].dt.day)
     
     data['Proxy Information'] = data['Proxy Information'].apply(lambda x: 1 if pandas.notna(x) else 0)
     data['Search Engine'] = data['Device Information'].apply(lambda x: searchEngine(x) if pandas.notnull(x) else None)
@@ -53,8 +51,17 @@ def datasetPreprocessor(dataset: Dataset):
     
     dataset.replaceBoolean()
     
+    dataset.normalizeColumn('Hour')
+    dataset.normalizeColumn('Minute')
+    dataset.normalizeColumn('Year')
+    dataset.normalizeColumn('Month')
+    dataset.normalizeColumn('Day')
+    dataset.normalizeColumn('Source Port')
+    dataset.normalizeColumn('Destination Port')
+    dataset.normalizeColumn('Packet Length')
+    dataset.normalizeColumn('Anomaly Scores')
+    
     dataset.saveDataset("Dataset/Altered_cybersecurity_attacks.csv")
-
 
 """
 TEST

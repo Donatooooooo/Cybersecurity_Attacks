@@ -1,5 +1,6 @@
 import pandas
-import warnings 
+import warnings
+from sklearn.preprocessing import MinMaxScaler, OneHotEncoder, LabelEncoder
 warnings.filterwarnings("ignore", category=FutureWarning) #va rimosso prima o poi
 
 class Dataset:
@@ -17,6 +18,13 @@ class Dataset:
 
     def saveDataset(self, path):
         self.dataset.to_csv(path, index = False)
+        
+    def getColumn(self, column):
+        return self.dataset[column]
+    
+    def normalizeColumn(self, column):
+        scalera = MinMaxScaler()
+        self.dataset[column] = scalera.fit_transform(self.dataset[[column]])
         
     def emptyValues(self, column, toReplace):
         self.dataset[column] = self.dataset[column].replace(toReplace, 1).fillna(0)
