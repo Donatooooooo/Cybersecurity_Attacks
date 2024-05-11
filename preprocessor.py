@@ -1,8 +1,6 @@
 from Dataset.dataset import Dataset
 from Util.Exceptions import userAgentException
-import pandas
-import sys
-import re
+import pandas, sys, re
 
 def browser(userAgent):
     browserPattern = re.compile(r'Mozilla.*?(Firefox|Chrome|MSIE|Safari)', re.IGNORECASE)
@@ -39,6 +37,9 @@ def basicPreprocessing(dataset: Dataset):
         print(e)
         sys.exit(1)
     dataset.setDataset(data)
+    dataset.dropDatasetColumns(['Source IP Address', 'Timestamp', 'Destination IP Address', 
+                                    'Payload Data', 'Attack Signature', 'User Information', 
+                                        'Network Segment', 'Geo-location Data', 'Device Information'])
     return dataset
 
 def emptyValues(dataset: Dataset):
@@ -74,16 +75,8 @@ def normalizeColumns(dataset: Dataset):
 
 def datasetPreprocessor(dataset: Dataset):
     dataset = basicPreprocessing(dataset)
-    dataset.dropDatasetColumns(['Source IP Address', 'Timestamp', 'Destination IP Address', 
-                                    'Payload Data', 'Attack Signature', 'User Information', 
-                                        'Network Segment', 'Geo-location Data', 'Device Information'])
     dataset = emptyValues(dataset)
     dataset = getDummies(dataset)
     dataset = normalizeColumns(dataset)
     dataset.replaceBoolean()
     dataset.saveDataset("Dataset/Altered_cybersecurity_attacks.csv")
-
-"""
-TEST
-"""
-datasetPreprocessor(Dataset("Dataset/cybersecurity_attacks.csv"))
