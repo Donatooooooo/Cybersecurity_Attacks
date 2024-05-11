@@ -15,12 +15,18 @@ class Dataset:
 
     def dropDatasetColumns(self, columnsToRemove):
         self.dataset = self.dataset.drop(columns = columnsToRemove)
+        
+    def addDatasetColumn(self, column, value):
+        self.dataset[column] = value
 
     def saveDataset(self, path):
         self.dataset.to_csv(path, index = False)
         
     def getColumn(self, column):
         return self.dataset[column]
+    
+    def getDataFrame(self, columns):
+        return self.dataset[columns]
     
     def normalizeColumn(self, column):
         scalera = MinMaxScaler()
