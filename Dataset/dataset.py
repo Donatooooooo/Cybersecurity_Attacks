@@ -1,7 +1,7 @@
 import pandas
 import warnings
-from sklearn.preprocessing import MinMaxScaler, OneHotEncoder, LabelEncoder
-warnings.filterwarnings("ignore", category=FutureWarning) #va rimosso prima o poi
+from sklearn.preprocessing import MinMaxScaler
+warnings.filterwarnings("ignore", category=FutureWarning)
 
 class Dataset:
     def __init__(self, path):
