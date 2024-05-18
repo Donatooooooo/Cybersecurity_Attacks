@@ -39,7 +39,7 @@ def basicPreprocessing(dataset: Dataset):
     dataset.setDataset(data)
     dataset.dropDatasetColumns(['Source IP Address', 'Timestamp', 'Destination IP Address', 
                                     'Payload Data', 'Attack Signature', 'User Information', 
-                                        'Network Segment', 'Geo-location Data', 'Device Information'])
+                                        'Network Segment', 'Geo-location Data'])
     return dataset
 
 def emptyValues(dataset: Dataset):
