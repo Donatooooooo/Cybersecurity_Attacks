@@ -1,0 +1,14 @@
+action_score('Blocked', 0).
+action_score('Logged', 1).
+action_score('Ignored', 2).
+packet_type_score('Control', 0).
+packet_type_score('Data', 1).
+protocol_score('TCP', 0).
+protocol_score('ICMP', 1).
+protocol_score('UDP', 2).
+traffic_score('FTP', 0).
+traffic_score('HTTP', 1).
+traffic_score('DNS', 0).
+attack_score('DDoS', 2).
+attack_score('Malware', 2).
+attack_score('Intrusion', 2).
