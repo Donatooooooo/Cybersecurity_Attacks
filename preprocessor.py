@@ -38,8 +38,8 @@ def basicPreprocessing(dataset: Dataset):
         sys.exit(1)
     dataset.setDataset(data)
     dataset.dropDatasetColumns(['Source IP Address', 'Timestamp', 'Destination IP Address', 
-                                    'Payload Data', 'Attack Signature', 'User Information', 
-                                        'Network Segment', 'Geo-location Data'])
+                                    'Payload Data', 'Attack Signature', 'User Information', 'Severity Level' 
+                                        'Network Segment', 'Geo-location Data', 'Device Information'])
     return dataset
 
 def emptyValues(dataset: Dataset):
@@ -80,3 +80,28 @@ def datasetPreprocessor(dataset: Dataset):
     dataset = normalizeColumns(dataset)
     dataset.replaceBoolean()
     dataset.saveDataset("Dataset/Altered_cybersecurity_attacks.csv")
+
+def prologPreprocessor():
+    data = Dataset("Dataset/cybersecurity_attacks.csv")
+    dataset = data.getDataset()
+    dataset['Proxy Information'] = dataset['Proxy Information'].apply(lambda x: 'Proxy' if pandas.notna(x) else 'None')
+    
+    mean = dataset['Packet Length'].mean()
+    dataset['Packet Length'] = dataset['Packet Length'].apply(lambda x: 'Long' if x>mean else 'Short')
+    
+    try:
+        dataset['Browser'] = dataset['Device Information'].apply(lambda x: browser(x) if pandas.notnull(x) else None)
+        dataset['OS'] = dataset['Device Information'].apply(lambda x: os(x) if pandas.notnull(x) else None)
+    except userAgentException as e:
+        print(e)
+        sys.exit(1)
+
+    dataset['Alerts/Warnings'] = dataset['Alerts/Warnings'].fillna('None')
+    dataset['Malware Indicators'] = dataset['Malware Indicators'].fillna('None')
+    dataset['Firewall Logs'] = dataset['Firewall Logs'].fillna('None')
+    dataset['IDS/IPS Alerts'] = dataset['IDS/IPS Alerts'].fillna('None')
+    
+    dataset.drop(columns=['Source IP Address', 'Timestamp', 'Destination IP Address', 'Log Source', 
+                                    'Payload Data', 'Attack Signature', 'User Information', 'Severity Level',
+                                        'Network Segment', 'Geo-location Data', 'Device Information',])
+    return dataset
