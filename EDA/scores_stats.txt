@@ -1,0 +1,76 @@
+MIN MAX E MEDIA
+
+Attack Complexity Scores:
+[3, 8, 5.166666666666667]
+
+Privileges Required Scores:
+[3, 9, 6.5]
+
+User Interaction Scores:
+[2, 4, 3.3333333333333335]
+
+Confidentiality Scores:
+[1, 4, 2.6666666666666665]
+
+Integrity Scores:
+[0, 3, 1.5]
+
+
+DAL NIST.GOV
+BaseScore = (.6*Impact +.4*Exploitability-1.5)*f(Impact)
+ 
+Impact = 10.41 * (1 - (1 - ConfImpact) * (1 - IntegImpact) * (1 - AvailImpact))
+
+Exploitability = 20 * AccessComplexity * Authentication * AccessVector
+
+f(Impact) = 0 if Impact=0; 1.176 otherwise
+ 
+AccessComplexity = case AccessComplexity of
+                        high:   0.35
+                        medium: 0.61
+                        low:    0.71
+ 
+Authentication   = case Authentication of
+                        Requires no authentication:                    0.704
+                        Requires single instance of authentication:    0.56
+                        Requires multiple instances of authentication: 0.45
+ 
+DAREMO PER SCONTATO CHE SIA 1
+AccessVector     = case AccessVector of
+                        Requires local access:    0.395
+                        Local Network accessible: 0.646
+                        Network accessible:       1
+ 
+ConfImpact       = case ConfidentialityImpact of
+                        none:             0
+                        partial:          0.275
+                        complete:         0.660
+ 
+IntegImpact      = case IntegrityImpact of
+                        none:             0
+                        partial:          0.275
+                        complete:         0.660
+
+DAREMO PER SCONTATO CHE SIA none
+AvailImpact      = case AvailabilityImpact of
+                        none:             0
+                        partial:          0.275
+                        complete:         0.660
+
+
+VALORI CALCOLATI PER OGNI FATTO
+
+Attack Complexity Scores:
+[4, 3, 5, 4, 3, 5, 6, 5, 6, 5, 4, 5, 5, 5, 8, 5, 7, 5, 6, 6, 8, 5, 5, 5, 5, 5, 7, 7, 6, 7, 6, 5, 5, 5, 5, 5, 7, 6, 7, 5, 6, 7, 5, 5, 5, 6, 6, 5, 5, 5, 6, 5, 7, 7, 6, 4, 3, 5, 5, 6, 5, 6, 5, 5, 5, 6, 5, 4, 7, 6, 3, 4, 5, 5, 6, 5, 5, 4, 6, 6, 4, 5, 4, 6, 5, 4, 5, 5, 6, 6, 4, 4, 4, 6, 5, 5, 6, 4, 4, 4, 3, 4, 4, 5, 6, 7, 4, 4, 3, 4, 4, 5, 6, 4, 6, 5, 6, 6, 7, 6, 4, 4, 7, 4, 4, 6, 6, 6, 6, 4, 6, 4, 7, 4, 5, 4, 3, 6, 4, 3, 6, 5, 5, 6]
+
+Privileges Required Scores:
+[8, 6, 7, 5, 5, 5, 7, 5, 6, 8, 8, 8, 6, 6, 3, 6, 5, 9, 4, 6, 6, 6, 4, 7, 7, 7, 8, 7, 5, 7, 7, 9, 7, 6, 8, 8, 5, 6, 5, 6, 5, 5, 7, 8, 7, 7, 6, 6, 6, 7, 6, 6, 6, 7, 8, 7, 8, 5, 5, 4, 8, 7, 7, 5, 8, 5, 7, 8, 7, 6, 5, 6, 6, 9, 8, 6, 6, 6, 8, 6, 7, 7, 7, 9, 7, 6, 8, 7, 7, 4, 8, 9, 8, 8, 7, 5, 6, 6, 9, 6, 7, 5, 7, 7, 4, 7, 6, 4]
+
+User Interaction Scores:
+[3, 2, 4, 3, 3, 4, 3, 4, 4]
+
+Confidentiality Scores:
+[3, 4, 2, 2, 1, 2, 3, 2, 3, 3, 4, 3]
+
+Integrity Scores:
+[1, 1, 3, 2, 0, 2]
