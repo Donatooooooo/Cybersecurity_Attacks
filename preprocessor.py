@@ -1,5 +1,6 @@
 from Dataset.dataset import Dataset
 from Util.Exceptions import userAgentException
+from prologManager import PrologManager
 import pandas, sys, re
 
 def browser(userAgent):
@@ -38,8 +39,8 @@ def basicPreprocessing(dataset: Dataset):
         sys.exit(1)
     dataset.setDataset(data)
     dataset.dropDatasetColumns(['Source IP Address', 'Timestamp', 'Destination IP Address', 
-                                    'Payload Data', 'Attack Signature', 'User Information', 'Severity Level' 
-                                        'Network Segment', 'Geo-location Data', 'Device Information'])
+                                    'Payload Data', 'Attack Signature', 'User Information', 'Severity Level', 
+                                        'Network Segment', 'Geo-location Data'])
     return dataset
 
 def emptyValues(dataset: Dataset):
@@ -53,7 +54,6 @@ def getDummies(dataset: Dataset):
     dataset.getDummies('Packet Type')
     dataset.getDummies('Protocol')
     dataset.getDummies('Action Taken')
-    dataset.getDummies('Severity Level')
     dataset.getDummies('Attack Type')
     dataset.getDummies('Traffic Type')
     dataset.getDummies('Log Source')
@@ -71,26 +71,17 @@ def normalizeColumns(dataset: Dataset):
     dataset.normalizeColumn('Destination Port')
     dataset.normalizeColumn('Packet Length')
     dataset.normalizeColumn('Anomaly Scores')
+    dataset.normalizeColumn('Basescore')
     return dataset
 
-def datasetPreprocessor(dataset: Dataset):
-    dataset = basicPreprocessing(dataset)
-    dataset = emptyValues(dataset)
-    dataset = getDummies(dataset)
-    dataset = normalizeColumns(dataset)
-    dataset.replaceBoolean()
-    dataset.saveDataset("Dataset/Altered_cybersecurity_attacks.csv")
-
 def prologPreprocessor():
-    data = Dataset("Dataset/cybersecurity_attacks.csv")
-    dataset = data.getDataset()
+    dataset = Dataset("Dataset/cybersecurity_attacks.csv").getDataset()
     dataset['Proxy Information'] = dataset['Proxy Information'].apply(lambda x: 'Proxy' if pandas.notna(x) else 'None')
     
     mean = dataset['Packet Length'].mean()
     dataset['Packet Length'] = dataset['Packet Length'].apply(lambda x: 'Long' if x>mean else 'Short')
     
     try:
-        dataset['Browser'] = dataset['Device Information'].apply(lambda x: browser(x) if pandas.notnull(x) else None)
         dataset['OS'] = dataset['Device Information'].apply(lambda x: os(x) if pandas.notnull(x) else None)
     except userAgentException as e:
         print(e)
@@ -101,7 +92,21 @@ def prologPreprocessor():
     dataset['Firewall Logs'] = dataset['Firewall Logs'].fillna('None')
     dataset['IDS/IPS Alerts'] = dataset['IDS/IPS Alerts'].fillna('None')
     
-    dataset.drop(columns=['Source IP Address', 'Timestamp', 'Destination IP Address', 'Log Source', 
-                                    'Payload Data', 'Attack Signature', 'User Information', 'Severity Level',
-                                        'Network Segment', 'Geo-location Data', 'Device Information',])
+    dataset = dataset.drop(columns=['Source IP Address', 'Timestamp', 'Destination IP Address', 'Anomaly Scores',  'Network Segment',
+                                        'Payload Data', 'Attack Signature', 'User Information', 'Severity Level', 'Alerts/Warnings', 'Log Source',
+                                            'Geo-location Data', 'Device Information', 'Destination Port', 'Action Taken', 'Source Port'])
     return dataset
+
+def addBasescore(frame, data: Dataset):
+    prolog = PrologManager('Prolog/rules.pl', frame)
+    prolog.computeBasescore()
+    data.addDatasetColumn("Basescore", prolog.getBasescore())
+    return data
+
+def datasetPreprocessor(dataset: Dataset):
+    dataset = emptyValues(dataset)
+    dataset = normalizeColumns(dataset)
+    dataset = getDummies(dataset)
+    dataset.replaceBoolean()
+    dataset.dropDatasetColumns(['Device Information'])
+    dataset.saveDataset("Dataset/Altered_cybersecurity_attacks.csv")
