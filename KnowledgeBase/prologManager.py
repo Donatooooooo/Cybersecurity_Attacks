@@ -2,14 +2,16 @@ from pyswip import Prolog
 
 class PrologManager():
 
-    def __init__(self, KBpath, frame):
+    def __init__(self, KBpath):
         self.prolog = Prolog()
         self.prolog.consult(KBpath)
-        self.frame = frame
         self.basescore = []
 
-    def computeBasescore(self):
-        for _, row in self.frame.iterrows():
+    def getBasescore(self):
+        return self.basescore
+
+    def computeBasescore(self, frame):
+        for _, row in frame.iterrows():
             protocol = row['Protocol']
             packetType = row['Packet Type']
             trafficType = row['Traffic Type']
@@ -21,9 +23,6 @@ class PrologManager():
             os = row['OS']
             packetLength = row['Packet Length']
             
-            query = f"basescore('{packetType}', '{trafficType}', '{packetLength}', '{protocol}', '{attackType}', '{firewall}', '{idsAlerts}', '{malware}', '{proxy}', '{os}', BASE)."
+            query = f"basescore('{packetType}', '{trafficType}', '{packetLength}', '{protocol}', '{attackType}', '{firewall}', '{idsAlerts}', '{malware}', '{proxy}', '{os}', BASESCORE)."
             queryResults = list(self.prolog.query(query))
-            self.basescore.extend(query['BASE'] for query in queryResults)
-            
-    def getBasescore(self):
-        return self.basescore
+            self.basescore.extend(query['BASESCORE'] for query in queryResults)

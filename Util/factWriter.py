@@ -1,5 +1,3 @@
-from preprocessor import prologPreprocessor
-
 def factWriter(dataset):
     attackComplexity = set()
     privilegesRequired = set()
@@ -15,7 +13,7 @@ def factWriter(dataset):
         confidentiality.add((row['Packet Type'], row['Traffic Type'], row['Packet Length']))
         integrity.add((row['Packet Type'], row['Protocol']))
 
-    with open('Prolog/kb.pl', 'w') as file:
+    with open('KnowledgeBase/kb.pl', 'w') as file:
         for data in attackComplexity:
             score = sum(complexityScore(value) for value in data)
             file.write(f"access_complexity('{data[0]}', '{data[1]}', '{data[2]}', '{data[3]}', '{data[4]}', '{data[5]}', {score}).\n")
