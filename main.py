@@ -1,4 +1,5 @@
 from Dataset.dataset import Dataset
+from KnowledgeBase.prologManager import PrologManager
 from preprocessor import *
 from kmeans import kMeans
 
@@ -7,11 +8,13 @@ MAINTEST
 """
 dataset = Dataset("Dataset/cybersecurity_attacks.csv")
 
-dataset = basicPreprocessing(dataset)
 plFrame = prologPreprocessor()
+prolog = PrologManager("KnowledgeBase/rules.pl")
+prolog.computeBasescore(plFrame)
 
-dataset = addBasescore(plFrame, dataset)
-datasetPreprocessor(dataset)
+dataset.addDatasetColumn("Basescore", prolog.getBasescore())
+dataset = datasetPreprocessor(dataset)
+dataset.saveDataset("Dataset/Altered_cybersecurity_attacks.csv")
 
 # dataset = Dataset("Dataset/Altered_cybersecurity_attacks.csv")
 # features = dataset.getDataFrame(['Malware Indicators', 'Anomaly Scores', 'Alerts/Warnings', 'Severity Level_Low',

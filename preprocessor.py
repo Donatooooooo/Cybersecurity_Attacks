@@ -1,6 +1,5 @@
 from Dataset.dataset import Dataset
 from Util.Exceptions import userAgentException
-from prologManager import PrologManager
 import pandas, sys, re
 
 def browser(userAgent):
@@ -40,7 +39,7 @@ def basicPreprocessing(dataset: Dataset):
     dataset.setDataset(data)
     dataset.dropDatasetColumns(['Source IP Address', 'Timestamp', 'Destination IP Address', 
                                     'Payload Data', 'Attack Signature', 'User Information', 'Severity Level', 
-                                        'Network Segment', 'Geo-location Data'])
+                                        'Network Segment', 'Geo-location Data', 'Device Information'])
     return dataset
 
 def emptyValues(dataset: Dataset):
@@ -97,16 +96,10 @@ def prologPreprocessor():
                                             'Geo-location Data', 'Device Information', 'Destination Port', 'Action Taken', 'Source Port'])
     return dataset
 
-def addBasescore(frame, data: Dataset):
-    prolog = PrologManager('Prolog/rules.pl', frame)
-    prolog.computeBasescore()
-    data.addDatasetColumn("Basescore", prolog.getBasescore())
-    return data
-
 def datasetPreprocessor(dataset: Dataset):
+    dataset = basicPreprocessing(dataset)
     dataset = emptyValues(dataset)
     dataset = normalizeColumns(dataset)
     dataset = getDummies(dataset)
     dataset.replaceBoolean()
-    dataset.dropDatasetColumns(['Device Information'])
-    dataset.saveDataset("Dataset/Altered_cybersecurity_attacks.csv")
+    return dataset
