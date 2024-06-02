@@ -32,4 +32,4 @@ class kMeans:
         plt.ylabel('Varianza Intra-Cluster', fontsize=14)
         plt.legend()
         plt.grid(True)
-        plt.savefig(f'Elbow_Method_{category_name}.png')
+        plt.savefig(f'Evaluation/Elbow_Method_{category_name}.png')
