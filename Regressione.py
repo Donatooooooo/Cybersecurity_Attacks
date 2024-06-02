@@ -27,10 +27,10 @@ X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, 
 
 model = Sequential()
 model.add(Dense(100, activation='relu', input_dim=X_train.shape[1]))
-model.add(Dropout(0.2))  # Dropout del 20%
+model.add(Dropout(0.2))
 model.add(Dense(50, activation='relu'))
-model.add(Dropout(0.2))  # Dropout del 20%
-model.add(Dense(1))  # Strato di output per la regressione
+model.add(Dropout(0.2))  
+model.add(Dense(1)) 
 
 
 model.compile(optimizer='adam', loss='mean_squared_error')
@@ -55,13 +55,3 @@ plt.legend()
 plt.show()
 
 
-new_example = np.array([0.7, 0.5, 0.9, 0.3, 0.6, 0.8, 0.4, 0.2, 0, 0.1, 0, 0.5, 0.6, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0]).reshape(1, -1)
-
-# Normalizzazione del nuovo esempio
-scaler = StandardScaler()
-new_example_scaled = scaler.fit_transform(new_example)
-
-# Predizione del nuovo esempio
-predicted_score = model.predict(new_example_scaled)
-
-print("Valore predetto:", predicted_score[0][0])
