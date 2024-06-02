@@ -103,3 +103,31 @@ def datasetPreprocessor(dataset: Dataset):
     dataset = getDummies(dataset)
     dataset.replaceBoolean()
     return dataset
+
+def datasetPreprocessor_classifier(dataset: Dataset):
+    dataset = basicPreprocessing(dataset)
+    dataset = emptyValues(dataset)
+    dataset.normalizeColumn('Hour')
+    dataset.normalizeColumn('Minute')
+    dataset.normalizeColumn('Year')
+    dataset.normalizeColumn('Month')
+    dataset.normalizeColumn('Day')
+    dataset.normalizeColumn('Source Port')
+    dataset.normalizeColumn('Destination Port')
+    dataset.normalizeColumn('Packet Length')
+    dataset.normalizeColumn('Anomaly Scores')
+    dataset.normalizeColumn('Basescore')
+    dataset.getDummies('Packet Type')
+    dataset.getDummies('Protocol')
+    dataset.getDummies('Action Taken')
+    dataset.getDummies('Traffic Type')
+    dataset.getDummies('Log Source')
+    dataset.getDummies('OS')
+    dataset.getDummies('Browser')
+    dataset.replaceBoolean()
+    return dataset
+
+def datasetPreprocessor_regressor(dataset: Dataset):
+    dataset = datasetPreprocessor_classifier(dataset)
+    dataset.getDummies('Attack Type')
+    return dataset
