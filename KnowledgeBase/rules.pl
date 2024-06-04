@@ -8,8 +8,6 @@ authentication_score('multiple', 0.45).
 authentication_score('single', 0.56).
 authentication_score('none', 0.704).
 
-%tutte le vulnerabilità provvengono dalla rete, nessun accesso fisico ai dispositivi 
-%QUESTO COMMENTO VA RIMOSSO
 access_vector('network', 1).
 avail_impact('none', 0).
 
@@ -21,8 +19,8 @@ ac_score(Protocol, Attack_Type, Packet_Type, Firewall, IDS_Alerts, Malware, AC) 
     access_complexity(P, A, Pt, F, AL, M, VALUE), 
     P=Protocol, A=Attack_Type, Pt=Packet_Type, F=Firewall, AL=IDS_Alerts, M=Malware,
     (
-        VALUE < 4.5 -> LABEL = low;
-        VALUE < 6 -> LABEL = medium;
+        VALUE < 4.33 -> LABEL = low;
+        VALUE < 5.16 -> LABEL = medium;
         LABEL = high
     ),
     access_complexity_score(LABEL, AC).
@@ -31,7 +29,7 @@ au_score(Proxy, Attack_Type, Traffic_Type, Os, AU) :-
     authentication(P, A, T, O, VALUE), 
     P=Proxy, A=Attack_Type, T=Traffic_Type, O=Os,
     (
-        VALUE < 4.5 -> LABEL = none;
+        VALUE < 5.42 -> LABEL = none;
         VALUE < 6.5 -> LABEL = single;
         LABEL = multiple
     ),
@@ -41,8 +39,8 @@ conf_score(Packet_Type, Traffic_Type, Packet_Length, C) :-
     confidential_impact(P, T, PL, VALUE), 
     P=Packet_Type, T=Traffic_Type, PL=Packet_Length,
     (
-        VALUE < 2 -> LABEL = none;
-        VALUE < 2.75 -> LABEL = partial;
+        VALUE < 2.0 -> LABEL = none;
+        VALUE < 2.66 -> LABEL = partial;
         LABEL = complete
     ),
     confinteg_impact(LABEL, C).
@@ -51,8 +49,8 @@ integ_score(Packet_Type, Protocol, I) :-
     integrity_impact(Pt, P, VALUE), 
     Pt=Packet_Type, P=Protocol,
     (
-        VALUE < 1.2 -> LABEL = none;
-        VALUE < 2 -> LABEL = partial;
+        VALUE < 0.66 -> LABEL = none;
+        VALUE < 1.5 -> LABEL = partial;
         LABEL = complete
     ),
     confinteg_impact(LABEL, I).
