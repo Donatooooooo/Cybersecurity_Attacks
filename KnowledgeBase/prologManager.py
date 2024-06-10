@@ -9,6 +9,21 @@ class PrologManager():
 
     def getBasescore(self):
         return self.basescore
+    
+    def askBasescore(self, packetType, trafficType, packetLength, protocol, attackType, firewall, idsAlerts, malware, proxy, os):
+        query = f"basescore('{packetType}', '{trafficType}', '{packetLength}', '{protocol}', '{attackType}', '{firewall}', '{idsAlerts}', '{malware}', '{proxy}', '{os}', BASESCORE)."
+        basescore = list(self.prolog.query(query))
+        return basescore
+    
+    def askImpact(self, packetType, trafficType, packetLenght, protocol):
+        query = f"impact('{packetType}', '{trafficType}', '{packetLenght}', '{protocol}', IMPACT)."
+        impact = list(self.prolog.query(query))
+        return impact
+    
+    def askExploitability(self, protocol, attackType, packetType, firewall, idsAlerts, malware, proxy, trafficType, os):
+        query = f"exploitability('{protocol}', '{attackType}', '{packetType}', '{firewall}', '{idsAlerts}', '{malware}', '{proxy}', '{trafficType}', '{os}', EXPLOITABILITY)."
+        exploit = list(self.prolog.query(query))
+        return exploit
 
     def computeBasescore(self, frame):
         for _, row in frame.iterrows():
