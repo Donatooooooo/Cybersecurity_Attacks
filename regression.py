@@ -95,19 +95,5 @@ class RegressionModelTrainer:
         return mse, mae, rmse, msle, y_pred
 
 
-    
-
-def regression():
-    filepath = "Dataset/datasetNOprepWbasescore.csv"
-    target_column = 'Basescore'
-    drop_columns = ['Basescore']
-    
-    trainer = RegressionModelTrainer(filepath, target_column, drop_columns)
-    X_train, X_test, y_train, y_test = trainer.load_and_preprocess_data()
-    model = trainer.build_model(X_train.shape[1])
-    trainer.train_model(model, X_train, y_train)
-    trainer.evaluate_model(model, X_test, y_test)
 
 
-if __name__ == "__main__":
-    regression()
