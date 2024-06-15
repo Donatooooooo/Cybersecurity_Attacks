@@ -163,16 +163,3 @@ class ModelTrainerClass:
         for model_name, model_function in models.items():
             model_function(model_name)
 
-def classifier():
-    filepath = "Dataset/datasetNOprepWbasescore.csv"
-    target_column = 'Protocol'
-    drop_columns = ['Protocol'] 
-    trainer = ModelTrainerClass(filepath, target_column, drop_columns)
-    
-    trainer_MLP = ModelTrainer(filepath, target_column, drop_columns)
-    X, y = trainer_MLP.load_and_preprocess_data()
-    trainer_MLP.train_model_MLP(X, y, 'MLP')
-    trainer.run()
-
-if __name__ == "__main__":
-    classifier()
