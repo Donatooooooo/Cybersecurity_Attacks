@@ -1,8 +1,10 @@
 from Dataset.dataset import Dataset
 from KnowledgeBase.prologManager import PrologManager
-from classifier import classifier
-from regression import regression
-from preprocessor import *
+from classifier import ModelTrainerClass
+from classifier_MLP import ModelTrainer
+from preprocessor import prologPreprocessor
+from regression import RegressionModelTrainer
+
 
 """
 MAINTEST
@@ -14,21 +16,19 @@ prolog = PrologManager("KnowledgeBase/rules.pl")
 prolog.computeBasescore(plFrame)
 
 dataset.addDatasetColumn("Basescore", prolog.getBasescore())
-dataset = datasetPreprocessor(dataset)
-dataset.saveDataset("Dataset/Altered_cybersecurity_attacks.csv")
-
-
-
-# dataset = Dataset("Dataset/Altered_cybersecurity_attacks.csv")
-# features = dataset.getDataFrame(['Malware Indicators', 'Anomaly Scores', 'Alerts/Warnings', 'Severity Level_Low',
-#                                     'Severity Level_Medium','Attack Type_Intrusion', 'Attack Type_Malware', 'Traffic Type_FTP', 'Traffic Type_HTTP'])
-# kmeans = kMeans().clustering(features, "Attack")
-# dataset.addDatasetColumn('Own Cluster', kmeans.fit_predict(features))
-# dataset.saveDataset("Dataset/Clusterized_dataset.csv")
+dataset.saveDataset("Dataset/datasetNOprepWbasescore.csv")
 
 
 #Classifier
-classifier()
+trainer = ModelTrainerClass("Dataset/datasetNOprepWbasescore.csv", 'Protocol', ['Protocol'])
+trainer_MLP = ModelTrainer("Dataset/datasetNOprepWbasescore.csv", 'Protocol', ['Protocol'])
+X, y = trainer_MLP.load_and_preprocess_data()
+trainer_MLP.train_model_MLP(X, y, 'MLP')
+trainer.run()
 
 #Regression
-regression()
+trainer = RegressionModelTrainer("Dataset/datasetNOprepWbasescore.csv", 'Basescore', ['Basescore'])
+X_train, X_test, y_train, y_test = trainer.load_and_preprocess_data()
+model = trainer.build_model(X_train.shape[1])
+trainer.train_model(model, X_train, y_train)
+trainer.evaluate_model(model, X_test, y_test)
