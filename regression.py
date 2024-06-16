@@ -1,19 +1,14 @@
-import csv
-from os import path
-import numpy as np
-import pandas as pd
-from Dataset.dataset import Dataset
-from sklearn.model_selection import learning_curve, train_test_split
-from sklearn.preprocessing import StandardScaler
-from keras.models import Sequential
-from keras.layers import Dense, Dropout
-from keras.callbacks import EarlyStopping, ModelCheckpoint
 from sklearn.metrics import mean_squared_error, mean_absolute_error,  mean_squared_log_error
-import matplotlib.pyplot as plt
-import sys
-
-from kmeans import kMeans
+from sklearn.model_selection import train_test_split
 from preprocessor import datasetPreprocessor_regressor
+import csv, sys, matplotlib.pyplot as plt, numpy as np
+from Dataset.dataset import Dataset
+from sklearn.preprocessing import StandardScaler
+from keras.src.models import Sequential
+from keras.src.layers import Dense, Dropout
+from keras.src.callbacks import EarlyStopping, ModelCheckpoint
+from kmeans import kMeans
+from os import path
 
 sys.stdout.reconfigure(encoding='utf-8')
 sys.stderr.reconfigure(encoding='utf-8')
