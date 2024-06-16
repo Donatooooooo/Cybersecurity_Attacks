@@ -1,25 +1,18 @@
-import csv
-from os import path
-from matplotlib.ticker import FormatStrFormatter, MultipleLocator
-import pandas as pd
-from sklearn.preprocessing import LabelEncoder
-from sklearn.tree import DecisionTreeClassifier
-from Dataset.dataset import Dataset
-from preprocessor import *
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, precision_score, recall_score
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
+import csv, sys, numpy as np, seaborn as sns, matplotlib.pyplot as plt
+from matplotlib.ticker import FormatStrFormatter, MultipleLocator
+from sklearn.preprocessing import LabelEncoder
+from Dataset.dataset import Dataset
+from keras.src.callbacks import EarlyStopping, ModelCheckpoint
+from sklearn.model_selection import train_test_split
 from imblearn.over_sampling import SMOTE
-from keras.models import Sequential
-from keras.layers import Dense, Dropout
-from keras.optimizers import Adam
-from keras.utils import to_categorical
-from keras.callbacks import EarlyStopping, ModelCheckpoint
+from keras.src.models import Sequential
+from keras.src.layers import Dense, Dropout
+from keras.src.optimizers import Adam
+from keras.src.utils import to_categorical
 from kmeans import kMeans
-import sys
+from preprocessor import *
+from os import path
 
 sys.stdout.reconfigure(encoding='utf-8')
 sys.stderr.reconfigure(encoding='utf-8')
@@ -37,9 +30,9 @@ class ModelTrainer:
 
         features = dataset.getDataFrame(['Day', 'Month', 'Year', 'Minute', 'Hour', 'Source Port', 'Destination Port', 'Packet Length'])
         kmeans = kMeans().clustering(features, "Info")
-        dataset.addDatasetColumn('Own Cluster1', kmeans.fit_predict(features))
+        dataset.addDatasetColumn('Temporal Features Cluster', kmeans.fit_predict(features))
         dataset.dropDatasetColumns(columnsToRemove=['Day', 'Month', 'Year', 'Minute', 'Hour', 'Source Port', 'Destination Port', 'Packet Length'])
-        dataset.normalizeColumn('Own Cluster1')
+        dataset.normalizeColumn('Temporal Features Cluster')
 
         vulnerabilities = dataset.getColumn(self.target_column)
         values = np.array(vulnerabilities)

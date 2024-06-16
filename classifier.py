@@ -1,26 +1,17 @@
-import csv
-from os import path
-from sklearn.calibration import LabelEncoder
-from sklearn.tree import DecisionTreeClassifier
-from Dataset.dataset import Dataset
-from classifier_MLP import ModelTrainer
-from preprocessor import *
 from sklearn.model_selection import StratifiedKFold, learning_curve, train_test_split, cross_val_score
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, precision_score, recall_score, multilabel_confusion_matrix
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-from numpy import array
+from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, precision_score, recall_score
+import csv, sys, numpy as np, seaborn as sns, matplotlib.pyplot as plt
+from sklearn.calibration import LabelEncoder
 from imblearn.over_sampling import SMOTE
-from kmeans import kMeans
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
-from keras.utils import to_categorical
-import sys
-from classifier_MLP import ModelTrainer
+from Dataset.dataset import Dataset
+from kmeans import kMeans
+from preprocessor import *
+
 sys.stdout.reconfigure(encoding='utf-8')
 sys.stderr.reconfigure(encoding='utf-8')
-
 
 class ModelTrainerClass:
     def __init__(self, filepath, target_column, drop_columns):
@@ -36,16 +27,16 @@ class ModelTrainerClass:
         # Creazione del primo cluster
         features = dataset.getDataFrame(['Day', 'Month', 'Year', 'Minute', 'Hour', 'Source Port', 'Destination Port', 'Packet Length'])
         kmeans = kMeans().clustering(features, "Info")
-        dataset.addDatasetColumn('Own Cluster1', kmeans.fit_predict(features))
+        dataset.addDatasetColumn('Temporal Features Cluster', kmeans.fit_predict(features))
         dataset.dropDatasetColumns(columnsToRemove=['Day', 'Month', 'Year', 'Minute', 'Hour', 'Source Port', 'Destination Port', 'Packet Length'])
-        dataset.normalizeColumn('Own Cluster1')
+        dataset.normalizeColumn('Temporal Features Cluster')
 
         # Creazione del secondo cluster
         features = dataset.getDataFrame(['Attack Type_Intrusion', 'Attack Type_Malware', 'Malware Indicators', 'Anomaly Scores', 'Alerts/Warnings', 'IDS/IPS Alerts', 'Proxy Information', 'Firewall Logs', 'Packet Type_Data', 'Action Taken_Ignored', 'Action Taken_Logged', 'Traffic Type_FTP', 'Traffic Type_HTTP', 'Log Source_Server'])
         kmeans = kMeans().clustering(features, "Attack")
-        dataset.addDatasetColumn('Own Cluster2', kmeans.fit_predict(features))
+        dataset.addDatasetColumn('Attack Profile Cluster', kmeans.fit_predict(features))
         dataset.dropDatasetColumns(columnsToRemove=['Attack Type_Intrusion', 'Attack Type_Malware', 'Malware Indicators', 'Anomaly Scores', 'Alerts/Warnings', 'IDS/IPS Alerts', 'Proxy Information', 'Firewall Logs', 'Packet Type_Data', 'Action Taken_Ignored', 'Action Taken_Logged', 'Traffic Type_FTP', 'Traffic Type_HTTP', 'Log Source_Server', 'OS_Linux', 'OS_Mac OS', 'OS_Windows', 'OS_iPad OS', 'OS_iPhone OS', 'Browser_Firefox', 'Browser_MSIE', 'Browser_Opera', 'Browser_Safari'])
-        dataset.normalizeColumn('Own Cluster2')
+        dataset.normalizeColumn('Attack Profile Cluster')
 
         vulnerabilities = dataset.getColumn(self.target_column)
         values = np.array(vulnerabilities)
