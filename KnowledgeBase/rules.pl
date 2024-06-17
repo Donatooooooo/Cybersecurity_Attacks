@@ -1,74 +1,74 @@
 :- consult('kb.pl').
 
-prop('high', 'AccessComplexity', 0.35).
-prop('medium', 'AccessComplexity', 0.61).
-prop('low', 'AccessComplexity', 0.71).
+prop('high', accessComplexity, 0.35).
+prop('medium', accessComplexity, 0.61).
+prop('low', accessComplexity, 0.71).
 
-prop('multiple', 'Authentication', 0.45).
-prop('single', 'Authentication', 0.56).
-prop('none', 'Authentication', 0.704).
+prop('multiple', authentication, 0.45).
+prop('single', authentication, 0.56).
+prop('none', authentication, 0.704).
 
-prop('network', 'AccessVector', 1).
-prop('none', 'AvailImpact', 0).
+prop('network', accessVector, 1).
+prop('none', availImpact, 0).
 
-prop('none', 'ConfImpact', 0).
-prop('partial', 'ConfImpact', 0.275).
-prop('complete', 'ConfImpact', 0.660).
+prop('none', confImpact, 0).
+prop('partial', confImpact, 0.275).
+prop('complete', confImpact, 0.660).
 
-prop('none', 'IntegImpact', 0).
-prop('partial', 'IntegImpact', 0.275).
-prop('complete', 'IntegImpact', 0.660).
+prop('none', integImpact, 0).
+prop('partial', integImpact, 0.275).
+prop('complete', integImpact, 0.660).
 
 ac_score(Protocol, Attack_Type, Packet_Type, Firewall, IDS_Alerts, Malware, AC) :-
     access_complexity(P, A, Pt, F, AL, M, VALUE), 
     P=Protocol, A=Attack_Type, Pt=Packet_Type, F=Firewall, AL=IDS_Alerts, M=Malware,
     (
-        VALUE < 4.33 -> LABEL = low;
-        VALUE < 5.16 -> LABEL = medium;
+        VALUE < 0.47 -> LABEL = low;
+        VALUE < 0.67 -> LABEL = medium;
         LABEL = high
     ),
-    prop(LABEL, 'AccessComplexity', AC).
+    prop(LABEL, accessComplexity, AC).
 
 au_score(Proxy, Attack_Type, Traffic_Type, Os, AU) :-
     authentication(P, A, T, O, VALUE), 
     P=Proxy, A=Attack_Type, T=Traffic_Type, O=Os,
     (
-        VALUE < 5.42 -> LABEL = none;
-        VALUE < 6.5 -> LABEL = single;
+        VALUE < 0.55 -> LABEL = none;
+        VALUE < 0.75 -> LABEL = single;
         LABEL = multiple
     ),
-    prop(LABEL, 'Authentication', AU).
+    prop(LABEL, authentication, AU).
 
 conf_score(Packet_Type, Traffic_Type, Packet_Length, C) :-
     confidential_impact(P, T, PL, VALUE), 
     P=Packet_Type, T=Traffic_Type, PL=Packet_Length,
     (
-        VALUE < 2.0 -> LABEL = none;
-        VALUE < 2.66 -> LABEL = partial;
+        VALUE < 0.20 -> LABEL = none;
+        VALUE < 0.35 -> LABEL = partial;
         LABEL = complete
     ),
-    prop(LABEL, 'ConfImpact', C).
+    prop(LABEL, confImpact, C).
 
 integ_score(Packet_Type, Protocol, I) :-
     integrity_impact(Pt, P, VALUE), 
     Pt=Packet_Type, P=Protocol,
     (
-        VALUE < 0.66 -> LABEL = none;
-        VALUE < 1.5 -> LABEL = partial;
+        VALUE < 0.1 -> LABEL = none;
+        VALUE < 0.2 -> LABEL = partial;
         LABEL = complete
     ),
-    prop(LABEL, 'IntegImpact', I).
+    prop(LABEL, integImpact, I).
 
 impact(PT, TT, PL, P, IMPACT) :-
     conf_score(PT, TT, PL, C),
     integ_score(PT, P, I),
-    prop(_, 'AvailImpact', A),
+    prop(_, availImpact, A),
     IMPACT is 10.41 * (1 - (1 - C) * (1 - I) * (1 - A)).
 
 exploitability(P, AT, PT, F, A, M, PR, TT, OS, EXPLOIT) :-
     ac_score(P, AT, PT, F, A, M, AC),
     au_score(PR, AT, TT, OS, AU),
-    prop(_, 'AccessVector', AV),
+    prop(_, accessVector, AV),
     EXPLOIT is 20 * AC * AU * AV.
 
 basescore(Packet_Type, Traffic_Type, Packet_Length, Protocol, Attack_Type, 
