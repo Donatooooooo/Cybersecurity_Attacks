@@ -1,6 +1,6 @@
 from pyswip import Prolog
 
-class PrologManager():
+class KnowledgeBase():
 
     def __init__(self, KBpath):
         self.prolog = Prolog()
