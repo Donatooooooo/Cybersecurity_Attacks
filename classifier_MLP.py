@@ -5,7 +5,6 @@ from sklearn.preprocessing import LabelEncoder
 from Dataset.dataset import Dataset
 from keras.src.callbacks import EarlyStopping, ModelCheckpoint
 from sklearn.model_selection import train_test_split
-from imblearn.over_sampling import SMOTE
 from keras.src.models import Sequential
 from keras.src.layers import Dense, Dropout
 from keras.src.optimizers import Adam
@@ -36,7 +35,6 @@ class ModelTrainer:
 
         vulnerabilities = dataset.getColumn(self.target_column)
         values = np.array(vulnerabilities)
-        oversample = SMOTE()
         label_encoder = LabelEncoder()
         y = label_encoder.fit_transform(values)
         dataset.dropDatasetColumns(self.drop_columns)
@@ -70,18 +68,7 @@ class ModelTrainer:
             writer.writerow({'Metric': 'F1_micro score', 'Value': f1_micro})
             writer.writerow({'Metric': 'F1_macro score', 'Value': f1_macro})
 
-        y_pred_decoded = np.argmax(y_pred, axis=0)
-        y_test_decoded = np.argmax(y_test, axis=0)
-        cm = confusion_matrix(y_test_decoded, y_pred_decoded)
-        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
-        class_labels = ['1:TCP', '2:UDP', '3:ICMP']
-        plt.yticks(ticks=np.arange(len(class_labels)) + 0.5, labels=class_labels, rotation=0, va='center')
-        plt.xticks(ticks=np.arange(len(class_labels)) + 0.5, labels=class_labels, rotation=0, va='center')
-        plt.xlabel('Predicted Class')
-        plt.ylabel('True Class')
-        plt.title('Confusion Matrix')
-        plt.savefig(f'Evaluation/Confusion_Matrix_{name}.png', bbox_inches='tight')
-
+        
     def plot_results(self, model_name, metrics, stopped_epoch, title=None, ylabel=None, ylim=None, metric_name=None, color=None):
         fig, ax = plt.subplots(figsize=(15, 4))
         if not (isinstance(metric_name, list) or isinstance(metric_name, tuple)):

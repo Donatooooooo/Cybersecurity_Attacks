@@ -2,7 +2,6 @@ from sklearn.model_selection import StratifiedKFold, learning_curve, train_test_
 from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, precision_score, recall_score
 import csv, sys, numpy as np, seaborn as sns, matplotlib.pyplot as plt
 from sklearn.calibration import LabelEncoder
-from imblearn.over_sampling import SMOTE
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
@@ -40,7 +39,6 @@ class ModelTrainerClass:
 
         vulnerabilities = dataset.getColumn(self.target_column)
         values = np.array(vulnerabilities)
-        oversample = SMOTE()
         label_encoder = LabelEncoder()
         y = label_encoder.fit_transform(values)
         dataset.dropDatasetColumns(self.drop_columns)
