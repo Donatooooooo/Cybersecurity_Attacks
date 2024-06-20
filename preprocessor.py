@@ -90,8 +90,8 @@ def prologPreprocessor():
     dataset['Firewall Logs'] = dataset['Firewall Logs'].fillna('None')
     dataset['IDS/IPS Alerts'] = dataset['IDS/IPS Alerts'].fillna('None')
     
-    dataset = dataset.drop(columns=['Source IP Address', 'Timestamp', 'Destination IP Address', 'Anomaly Scores',  'Network Segment',
-                                        'Payload Data', 'Attack Signature', 'User Information', 'Severity Level', 'Alerts/Warnings', 'Log Source',
+    dataset = dataset.drop(columns=['Source IP Address', 'Timestamp', 'Destination IP Address', 'Log Source',  'Network Segment',
+                                        'Payload Data', 'Attack Signature', 'User Information', 'Severity Level', 'Alerts/Warnings',
                                             'Geo-location Data', 'Device Information', 'Destination Port', 'Action Taken', 'Source Port'])
     return dataset
 

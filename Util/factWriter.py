@@ -1,4 +1,10 @@
-def factWriter(dataset):
+import pandas
+
+def factsWriter(dataset):
+    aggregationFactWriter(dataset)
+    evaluateFactWriter(dataset)
+
+def aggregationFactWriter(dataset):
     attackComplexity = set()
     privilegesRequired = set()
     confidentiality = set()
@@ -11,11 +17,10 @@ def factWriter(dataset):
         confidentiality.add((row['Packet Type'], row['Traffic Type'], row['Packet Length']))
         integrity.add((row['Packet Type'], row['Protocol']))
 
-    with open('KnowledgeBase/test.pl', 'w') as file:
+    with open('KnowledgeBase/aggregations.pl', 'w') as file:
         for data in attackComplexity:
             score = round(sum(complexityScore(value) for value in data), 4)
             file.write(f"access_complexity('{data[0]}', '{data[1]}', '{data[2]}', '{data[3]}', '{data[4]}', '{data[5]}', {score}).\n")
-            v.append(score)
         for data in privilegesRequired:
             score = round(sum(privilegesScore(value) for value in data), 4)
             file.write(f"authentication('{data[0]}', '{data[1]}', '{data[2]}', '{data[3]}', {score}).\n")
@@ -27,6 +32,22 @@ def factWriter(dataset):
         for data in integrity:
             score = round(sum(integrityScore(value) for value in data), 4)
             file.write(f"integrity_impact('{data[0]}', '{data[1]}', {score}).\n")
+
+def evaluateFactWriter(dataset):
+    subData = pandas.DataFrame()
+    subData['Action Taken'] = dataset['Action Taken']
+    subData['Basescore'] = dataset['Basescore']
+    subData['Anomaly Scores'] = dataset['Anomaly Scores']
+    
+    sets = set()
+
+    for _, row in subData.iterrows():
+        fact = f"network_event('{row['Action Taken']}', {row['Basescore']}, {row['Anomaly Scores']}).\n"
+        sets.add(fact)
+
+    with open ('KnowledgeBase/evaluations.pl', 'w') as file:        
+        for fact in sets:
+            file.write(fact)
 
 def complexityScore(item):
     scores = {
