@@ -1,24 +1,3 @@
-:- consult('kb.pl').
-
-prop('high', accessComplexity, 0.35).
-prop('medium', accessComplexity, 0.61).
-prop('low', accessComplexity, 0.71).
-
-prop('multiple', authentication, 0.45).
-prop('single', authentication, 0.56).
-prop('none', authentication, 0.704).
-
-prop('network', accessVector, 1).
-prop('none', availImpact, 0).
-
-prop('none', confImpact, 0).
-prop('partial', confImpact, 0.275).
-prop('complete', confImpact, 0.660).
-
-prop('none', integImpact, 0).
-prop('partial', integImpact, 0.275).
-prop('complete', integImpact, 0.660).
-
 ac_score(Protocol, Attack_Type, Packet_Type, Firewall, IDS_Alerts, Malware, AC) :-
     access_complexity(P, A, Pt, F, AL, M, VALUE), 
     P=Protocol, A=Attack_Type, Pt=Packet_Type, F=Firewall, AL=IDS_Alerts, M=Malware,
@@ -88,12 +67,24 @@ basescore(Packet_Type, Traffic_Type, Packet_Length, Protocol, Attack_Type,
 
     BASESCORE is (0.6 * IMPACT + 0.4 * EXPLOIT - 1.5) * F_IMPACT.
 
-% TESTING 
-% ac_score('UDP', 'Intrusion', 'Data', 'Log Data', 'None', 'None', AC).
-% au_score('None', 'DDoS', 'DNS', 'Android', AU).
-% conf_score('Data', 'DNS', 'Long', C).
-% integ_score('Data', 'TCP', I).
+is_safe(Basescore, AnomalyScore) :-
+    network_event('Ignored', Basescore, AnomalyScore),
+    Basescore < 3.9,
+    AnomalyScore < 50.
 
-% basescore('Data', 'FTP', 'Long', 'UDP', 'Malware', 'Log Data', 'None', 'None', 'Proxy', 'Windows', B).
-% basescore('Data', 'FTP', 'Long', 'TCP', 'Intrusion', 'Log Data', 'None', 'None', 'Proxy', 'Mac OS', B).
-% basescore('Data', 'HTTP', 'Long', 'TCP', 'Intrusion', 'Log Data', 'None', 'None', 'Proxy', 'Linux', B).
+is_safe(Basescore, AnomalyScore) :-
+    network_event('Logged', Basescore, AnomalyScore),
+    Basescore < 6.9,
+    AnomalyScore < 60.
+
+is_safe(Basescore, AnomalyScore) :-
+    network_event('Blocked', Basescore, AnomalyScore),
+    Basescore < 8.9,
+    AnomalyScore < 80.
+
+safe_event(Packet_Type, Traffic_Type, Packet_Length, Protocol, Attack_Type, 
+            Firewall, IDS_Alerts, Malware, Proxy, Os, AnomalyScore) :-
+
+            basescore(Packet_Type, Traffic_Type, Packet_Length, Protocol, Attack_Type, 
+            Firewall, IDS_Alerts, Malware, Proxy, Os, BASESCORE),
+            is_safe(BASESCORE, AnomalyScore).
