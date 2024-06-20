@@ -13,17 +13,22 @@ class KnowledgeBase():
     def askBasescore(self, packetType, trafficType, packetLength, protocol, attackType, firewall, idsAlerts, malware, proxy, os):
         query = f"basescore('{packetType}', '{trafficType}', '{packetLength}', '{protocol}', '{attackType}', '{firewall}', '{idsAlerts}', '{malware}', '{proxy}', '{os}', BASESCORE)."
         basescore = list(self.prolog.query(query))
-        return basescore
+        return basescore[0]['BASESCORE']
     
     def askImpact(self, packetType, trafficType, packetLenght, protocol):
         query = f"impact('{packetType}', '{trafficType}', '{packetLenght}', '{protocol}', IMPACT)."
         impact = list(self.prolog.query(query))
-        return impact
+        return impact[0]['IMPACT']
     
     def askExploitability(self, protocol, attackType, packetType, firewall, idsAlerts, malware, proxy, trafficType, os):
-        query = f"exploitability('{protocol}', '{attackType}', '{packetType}', '{firewall}', '{idsAlerts}', '{malware}', '{proxy}', '{trafficType}', '{os}', EXPLOITABILITY)."
+        query = f"exploitability('{protocol}', '{attackType}', '{packetType}', '{firewall}', '{idsAlerts}', '{malware}', '{proxy}', '{trafficType}', '{os}', EXPLOIT)."
         exploit = list(self.prolog.query(query))
-        return exploit
+        return exploit[0]['EXPLOIT']
+
+    def isSafeEvent(self, packetType, trafficType, packetLength, protocol, attackType, firewall, idsAlerts, malware, proxy, os, anomalyScore):
+        query = f"safe_event('{packetType}', '{trafficType}', '{packetLength}', '{protocol}', '{attackType}', '{firewall}', '{idsAlerts}', '{malware}', '{proxy}', '{os}', {anomalyScore})."
+        isSafe = bool(list(self.prolog.query(query)))
+        return "+++ Safe Event +++" if isSafe else "--- Risky Event ---"    
 
     def computeBasescore(self, frame):
         for _, row in frame.iterrows():
