@@ -14,8 +14,11 @@ print("\n\n *** LOGICAL MODULE *** \n")
 plFrame = prologPreprocessor()
 kb = KnowledgeBase("KnowledgeBase/main.pl")
 kb.computeBasescore(plFrame)
+dataset.addDatasetColumn("Basescore", kb.getBasescore())
+dataset.saveDataset("Dataset/BaseScore_cybersecurity_attacks.csv")
 
-for _, row in plFrame.head(3).iterrows():
+
+for _, row in plFrame.tail(4).iterrows():
     protocol = row['Protocol']
     packetType = row['Packet Type']
     trafficType = row['Traffic Type']
@@ -28,7 +31,7 @@ for _, row in plFrame.head(3).iterrows():
     anomalyScore = row['Anomaly Scores']
     os = row['OS']
 
-    print("_______________________________________________________________________________________\n")
+    print("--------------------------------------------------------------------------------------------------------------------------------\n")
     print(f"network_event = ('{packetType}', '{trafficType}', '{packetLength}', '{protocol}', '{attackType}', '{firewall}', '{idsAlerts}', '{malware}', '{proxy}', '{os}', {anomalyScore})\n")
     basescore = kb.askBasescore(packetType, trafficType, packetLength, protocol, attackType, firewall, idsAlerts, malware, proxy, os)
     impact = kb.askImpact(packetType, trafficType, packetLength, protocol)
@@ -38,8 +41,6 @@ for _, row in plFrame.head(3).iterrows():
     print("BASESCORE: ", basescore, ", IMPACT: ", impact, ", EXPLOITABILITY: ", exploit)
     print(isSafe)
 
-dataset.addDatasetColumn("Basescore", kb.getBasescore())
-dataset.saveDataset("Dataset/BaseScore_cybersecurity_attacks.csv")
 
 print("\n\n *** CLASSIFIERS MODULE *** \n\n")
 trainer = ModelTrainerClass("Dataset/BaseScore_cybersecurity_attacks.csv", 'Protocol', ['Protocol'])
@@ -54,3 +55,4 @@ X_train, X_test, y_train, y_test = trainer.load_and_preprocess_data()
 model = trainer.build_model(X_train.shape[1])
 trainer.train_model(model, X_train, y_train)
 trainer.evaluate_model(model, X_test, y_test)
+
