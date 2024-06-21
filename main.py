@@ -11,12 +11,11 @@ MAINTEST
 dataset = Dataset("Dataset/cybersecurity_attacks.csv")
 
 print("\n\n *** LOGICAL MODULE *** \n")
-plFrame = prologPreprocessor()
+plFrame = prologPreprocessor("Dataset/cybersecurity_attacks.csv")
 kb = KnowledgeBase("KnowledgeBase/main.pl")
 kb.computeBasescore(plFrame)
 dataset.addDatasetColumn("Basescore", kb.getBasescore())
 dataset.saveDataset("Dataset/BaseScore_cybersecurity_attacks.csv")
-
 
 for _, row in plFrame.tail(4).iterrows():
     protocol = row['Protocol']

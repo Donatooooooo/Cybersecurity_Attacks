@@ -72,8 +72,8 @@ def normalizeColumns(dataset: Dataset):
     dataset.normalizeColumn('Basescore')
     return dataset
 
-def prologPreprocessor():
-    dataset = Dataset("Dataset/cybersecurity_attacks.csv").getDataset()
+def prologPreprocessor(path):
+    dataset = Dataset(path).getDataset()
     dataset['Proxy Information'] = dataset['Proxy Information'].apply(lambda x: 'Proxy' if pandas.notna(x) else 'None')
     
     mean = dataset['Packet Length'].mean()
@@ -85,6 +85,7 @@ def prologPreprocessor():
         print(e)
         sys.exit(1)
 
+    dataset['Anomaly Scores'] = round(dataset['Anomaly Scores'])
     dataset['Alerts/Warnings'] = dataset['Alerts/Warnings'].fillna('None')
     dataset['Malware Indicators'] = dataset['Malware Indicators'].fillna('None')
     dataset['Firewall Logs'] = dataset['Firewall Logs'].fillna('None')
@@ -92,7 +93,7 @@ def prologPreprocessor():
     
     dataset = dataset.drop(columns=['Source IP Address', 'Timestamp', 'Destination IP Address', 'Log Source',  'Network Segment',
                                         'Payload Data', 'Attack Signature', 'User Information', 'Severity Level', 'Alerts/Warnings',
-                                            'Geo-location Data', 'Device Information', 'Destination Port', 'Action Taken', 'Source Port'])
+                                            'Geo-location Data', 'Device Information', 'Destination Port', 'Source Port'])
     return dataset
 
 def datasetPreprocessor(dataset: Dataset):
