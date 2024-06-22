@@ -42,10 +42,10 @@ for _, row in plFrame.tail(4).iterrows():
 
 
 print("\n\n *** CLASSIFIERS MODULE *** \n\n")
-trainer = ModelTrainerClass("Dataset/BaseScore_cybersecurity_attacks.csv", 'Protocol', ['Protocol'])
 trainer_MLP = ModelTrainer("Dataset/BaseScore_cybersecurity_attacks.csv", 'Protocol', ['Protocol'])
 X, y = trainer_MLP.load_and_preprocess_data()
 trainer_MLP.train_model_MLP(X, y, 'MLP')
+trainer = ModelTrainerClass("Dataset/BaseScore_cybersecurity_attacks.csv", 'Protocol', ['Protocol'])
 trainer.run()
 additional_features=['Attack Type_Intrusion', 'Attack Type_Malware', 'Malware Indicators', 'Anomaly Scores', 'Alerts/Warnings', 'IDS/IPS Alerts', 'Proxy Information', 'Firewall Logs', 'Packet Type_Data', 'Action Taken_Ignored', 'Action Taken_Logged', 'Traffic Type_FTP', 'Traffic Type_HTTP', 'Log Source_Server']
 trainer_KNN = ModelTrainerClass("Dataset/BaseScore_cybersecurity_attacks.csv", 'Protocol', ['Protocol'],additional_features=additional_features)
