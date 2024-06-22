@@ -1,6 +1,6 @@
 Metric,Value
-Accuracy,0.715625
-Precision (micro),0.715625
-Recall (micro),0.715625
-F1_micro score,0.715625
-F1_macro score,0.7153060965109904
+Accuracy,0.843625
+Precision (micro),0.9182312925170067
+Recall (micro),0.843625
+F1_micro score,0.8793485342019544
+F1_macro score,0.8792436647429612
