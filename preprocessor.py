@@ -22,12 +22,6 @@ def os(userAgent):
 
 def basicPreprocessing(dataset: Dataset):
     data = dataset.getDataset()
-    data['Timestamp'] = pandas.to_datetime(data['Timestamp'])
-    data.insert(0, 'Hour',  data['Timestamp'].dt.hour)
-    data.insert(0, 'Minute',  data['Timestamp'].dt.minute)
-    data.insert(0, 'Year',  data['Timestamp'].dt.year)
-    data.insert(0, 'Month',  data['Timestamp'].dt.month)
-    data.insert(0, 'Day',  data['Timestamp'].dt.day)
     
     data['Proxy Information'] = data['Proxy Information'].apply(lambda x: 1 if pandas.notna(x) else 0)
     try:
@@ -60,11 +54,6 @@ def getDummies(dataset: Dataset):
     return dataset
 
 def normalizeColumns(dataset: Dataset):
-    dataset.normalizeColumn('Hour')
-    dataset.normalizeColumn('Minute')
-    dataset.normalizeColumn('Year')
-    dataset.normalizeColumn('Month')
-    dataset.normalizeColumn('Day')
     dataset.normalizeColumn('Source Port')
     dataset.normalizeColumn('Destination Port')
     dataset.normalizeColumn('Packet Length')
