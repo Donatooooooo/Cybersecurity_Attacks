@@ -1,7 +1,7 @@
 from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, precision_score, recall_score
 import csv, sys, numpy as np, seaborn as sns, matplotlib.pyplot as plt
 from matplotlib.ticker import FormatStrFormatter, MultipleLocator
-from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 from Dataset.dataset import Dataset
 from keras.src.callbacks import EarlyStopping, ModelCheckpoint
 from sklearn.model_selection import train_test_split
@@ -27,16 +27,19 @@ class ModelTrainer:
         dataset = datasetPreprocessor(dataset)
 
 
-        features = dataset.getDataFrame(['Day', 'Month', 'Year', 'Minute', 'Hour', 'Source Port', 'Destination Port', 'Packet Length'])
-        kmeans = kMeans().clustering(features, "Info")
-        dataset.addDatasetColumn('Temporal Features Cluster', kmeans.fit_predict(features))
-        dataset.dropDatasetColumns(columnsToRemove=['Day', 'Month', 'Year', 'Minute', 'Hour', 'Source Port', 'Destination Port', 'Packet Length'])
-        dataset.normalizeColumn('Temporal Features Cluster')
+        features = dataset.getDataFrame(['Source Port', 'Destination Port', 'Packet Length'])
+        kmeans = kMeans().clustering(features, "Network")
+        dataset.addDatasetColumn('Network Features Cluster', kmeans.fit_predict(features))
+        dataset.dropDatasetColumns(columnsToRemove=['Source Port', 'Destination Port', 'Packet Length'])
+        dataset.normalizeColumn('Network Features Cluster')
 
         vulnerabilities = dataset.getColumn(self.target_column)
         values = np.array(vulnerabilities)
         label_encoder = LabelEncoder()
-        y = label_encoder.fit_transform(values)
+        integer_encoded = label_encoder.fit_transform(values)
+        onehot_encoder = OneHotEncoder(sparse_output=False)
+        integer_encoded = integer_encoded.reshape(len(integer_encoded), 1)
+        y = onehot_encoder.fit_transform(integer_encoded)
         dataset.dropDatasetColumns(self.drop_columns)
         X = dataset.getDataset()
 
