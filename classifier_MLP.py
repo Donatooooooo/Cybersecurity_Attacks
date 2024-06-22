@@ -48,7 +48,7 @@ class ModelTrainer:
     
     def evaluate_model_MLP(self, model, X_test, y_test, name):
         y_pred = model.predict(X_test)
-        y_pred = to_categorical(np.argmax(y_pred, axis=1), 3)
+        y_pred = to_categorical(np.argmax(y_pred, axis=1),3)
         accuracy = accuracy_score(y_test, y_pred)
         precision_micro = precision_score(y_test, y_pred, average='micro')
         recall_micro = recall_score(y_test, y_pred, average='micro')
@@ -97,9 +97,6 @@ class ModelTrainer:
         SEED_VALUE = 42
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
         X_train, X_valid, y_train, y_valid = train_test_split(X_train, y_train, random_state=SEED_VALUE, test_size=0.10)
-        y_train = to_categorical(y_train)
-        y_test = to_categorical(y_test)
-        y_valid = to_categorical(y_valid)
         model = Sequential([
             Dense(128, activation='relu', input_shape=(X_train.shape[1],)),
             Dropout(0.5),
