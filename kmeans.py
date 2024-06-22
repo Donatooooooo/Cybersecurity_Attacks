@@ -4,7 +4,7 @@ from kneed import KneeLocator
 
 class kMeans:
     def clustering(self, X, categories):
-        k = self.computeK(X, max_k=10, categoryName=categories)
+        k = self.computeK(X, max_k=12, categoryName=categories)
         kmeans = KMeans(n_clusters=k, n_init=5, init='random')
         kmeans.fit(X)
         
