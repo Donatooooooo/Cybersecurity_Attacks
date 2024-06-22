@@ -2,6 +2,7 @@ from Dataset.dataset import Dataset
 from Util.Exceptions import userAgentException
 import pandas, sys, re
 
+
 def browser(userAgent):
     browserPattern = re.compile(r'Mozilla.*?(Firefox|Chrome|MSIE|Safari)', re.IGNORECASE)
     browserMatch = browserPattern.search(userAgent)
