@@ -23,11 +23,11 @@ class RegressionModelTrainer:
     def load_and_preprocess_data(self):
         dataset = Dataset(self.filepath)
         dataset = datasetPreprocessor_regressor(dataset)
-        features = dataset.getDataFrame(['Day', 'Month', 'Year', 'Minute','Hour','Source Port','Destination Port','Packet Length'])
-        kmeans = kMeans().clustering(features, "Attack")
-        dataset.addDatasetColumn('Own Cluster', kmeans.fit_predict(features))
-        dataset.dropDatasetColumns(columnsToRemove=['Day', 'Month', 'Year', 'Minute','Hour','Source Port','Destination Port','Packet Length'])
-        dataset.normalizeColumn('Own Cluster')
+        features = dataset.getDataFrame(['Source Port','Destination Port','Packet Length'])
+        kmeans = kMeans().clustering(features, "Network")
+        dataset.addDatasetColumn('Network Features Cluster', kmeans.fit_predict(features))
+        dataset.dropDatasetColumns(columnsToRemove=['Source Port','Destination Port','Packet Length'])
+        dataset.normalizeColumn('Network Features Cluster')
         y = dataset.getColumn(self.target_column)
         dataset.dropDatasetColumns(self.drop_columns)
         X = dataset.getDataset()
@@ -73,6 +73,7 @@ class RegressionModelTrainer:
         mae = mean_absolute_error(y_test, y_pred)
         rmse = np.sqrt(mse)
         msle = mean_squared_log_error(y_test, y_pred)
+
         metrics = {'MSE': mse, 'MAE': mae, 'RMSE': rmse, 'MSLE': msle}
 
  
