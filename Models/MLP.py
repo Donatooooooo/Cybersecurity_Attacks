@@ -7,7 +7,7 @@ from sklearn.preprocessing import StandardScaler
 from keras.src.models import Sequential
 from keras.src.layers import Dense, Dropout
 from keras.src.callbacks import EarlyStopping, ModelCheckpoint
-from kmeans import kMeans
+from Models.kmeans import kMeans
 from os import path
 
 sys.stdout.reconfigure(encoding='utf-8')

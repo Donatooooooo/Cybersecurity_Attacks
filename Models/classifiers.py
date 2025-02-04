@@ -9,7 +9,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from Dataset.dataset import Dataset
-from kmeans import kMeans
+from Models.kmeans import kMeans
 from preprocessor import *
 
 sys.stdout.reconfigure(encoding='utf-8')
