@@ -27,17 +27,14 @@ class ModelTrainerClass:
         dataset = Dataset(self.filepath)
         dataset = datasetPreprocessor(dataset)
 
-        # Creazione del primo cluster
         features = dataset.getDataFrame(['Source Port', 'Destination Port', 'Packet Length'])
         kmeans = kMeans().clustering(features, "Network")
         dataset.addDatasetColumn('Network Features Cluster', kmeans.fit_predict(features))
         dataset.dropDatasetColumns(columnsToRemove=['Source Port', 'Destination Port', 'Packet Length'])
         dataset.normalizeColumn('Network Features Cluster')
 
-        # Creazione del secondo cluster
         base_features = ['OS_Linux', 'OS_Mac OS', 'OS_Windows', 'OS_iPad OS', 'OS_iPhone OS', 'Browser_Firefox', 'Browser_MSIE', 'Browser_Opera', 'Browser_Safari']
         
-        # Se ci sono feature addizionali per il KNN, aggiungile al cluster
         if additional_features:
             base_features.extend(additional_features)
 
@@ -178,4 +175,3 @@ class ModelTrainerClass:
 
         for model_name, model_function in models.items():
             model_function(model_name)
-
